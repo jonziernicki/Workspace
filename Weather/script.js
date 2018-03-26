@@ -1,8 +1,3 @@
-function getYesterday(event){
-    fetch("")
-}
-
-
 var x = document.getElementById("demo");
 
 function getLocation() {
@@ -26,12 +21,11 @@ function showPosition(position) {
    });
 }
 
+//run loadWeather when page loaded
 document.addEventListener("DOMContentLoaded", function() {
-    loadTodayWeather()
+    loadWeather()
   });
-document.addEventListener("DOMContentLoaded", function() {
-    loadYesterdayWeather()
-  });
+
   
 var cityName;
 var todayTemp;
@@ -46,49 +40,71 @@ var yesterdayWind;
 var yesterdayDescription;
 var yesterdayHigh;
 var yesterdayLow;
+var testVar;
 
-  function loadTodayWeather(){
-    fetch(`http://api.openweathermap.org/data/2.5/weather?zip=44135,us&units=imperial&APPID=6695ee4afe2ca5a6f950397f981dd760`)
+
+
+
+function loadWeather() {
+        // todays date and yesterdays converted for api call
+         let date = new Date;
+         let yesterday = date;
+         yesterday.setDate(yesterday.getDate()-1);
+         date = date.toISOString().split('T')[0];
+         yesterday =  yesterday.toISOString().split('T')[0];
+         let today = new Date;
+         today =  today.toISOString().split('T')[0];
+
+         document.getElementById("yesterdayDay").innerText = today;
+       
+         //Get yesterday weather info api call
+    fetch(`https://api.weatherbit.io/v2.0/history/daily?postal_code=44135&country=US&start_date=${yesterday}&end_date=${today}&units=I&lang=el&key=e1e7b7d46da0477aaa6ae46a3f9c6b68`)
     .then((response)=> response.json())
    .then((json)=>{
-    //Get today info
-       let cityName = json.name;
-       let todayTemp = json.main.temp;
-       let todayWind = json.wind.speed;
-       let weatherArray= json.weather[0];
-       let todayDescription = weatherArray.description;
-       let todayHigh = json.main.temp_max;
-       let todayLow = json.main.temp_min;
+     
+       let yesterdayArray= json.data[0];
+       let yesterdayWind = yesterdayArray.wind_spd;
+       let yesterdayTemp = yesterdayArray.temp;
+        let yesterdayHigh = yesterdayArray.max_temp;
+       let yesterdayLow = yesterdayArray.min_temp;
+      let nowMinusDay = (Date.now()-86400000);
+   
 
-    //Save today info
-        document.getElementById("cityName").innerText = cityName;
-       document.getElementById("todayTemp").innerText = todayTemp;
-       document.getElementById("todayWind").innerText = todayWind;
-       document.getElementById("todayDescription").innerText = todayDescription;
-       document.getElementById("todayHigh").innerText = todayHigh;
-       document.getElementById("todayLow").innerText = todayLow;
-
-  })};
-
-function loadYesterdayWeather() {
-    fetch(`http://api.openweathermap.org/data/2.5/weather?zip=44135,us&units=imperial&APPID=6695ee4afe2ca5a6f950397f981dd760`)
-    .then((response)=> response.json())
-   .then((json)=>{
-    //Get today info
-       let yesterdayTemp = json.main.temp;
-       let yesterdayWind = json.wind.speed;
-       let weatherArray= json.weather[0];
-       let yesterdayDescription = weatherArray.description;
-        let yesterdayHigh = json.main.temp_max;
-       let yesterdayLow = json.main.temp_min
-
+       
+      
+      
     //get yesterday info
-        let yeserdayTemp = 
-    //Save today info
-        document.getElementById("yesterdayTemp").innerText = yesterdayTemp;
-       document.getElementById("yesterdayWind").innerText = yesterdayWind;
-       document.getElementById("yesterdayDescription").innerText = yesterdayDecription;
+
+    //Save yesterday info
+       document.getElementById("yesterdayTemp").innerText = yesterdayTemp;
        document.getElementById("yesterdayHigh").innerText = yesterdayHigh;
        document.getElementById("yesterdayLow").innerText = yesterdayLow;
+       document.getElementById("yesterdayWind").innerText = yesterdayWind;
+       document.getElementById("yesterdayDay").innerText = date;
 
-  })};
+
+
+  })
+
+    //Get today weather info api call
+fetch(`https://api.weatherbit.io/v2.0/current?postal_code=44135&country=US&units=I&key=e1e7b7d46da0477aaa6ae46a3f9c6b68`) 
+.then((response)=> response.json())
+    .then((json)=>{
+     //Get today info
+        let todayArray= json.data[0];
+        let todayTemp = todayArray.temp;
+        var todayWind = todayArray.wind_spd;
+        let cityName = todayArray.city_name;
+        let  todayDescription = todayArray.weather.description;
+       var  testVar = 11111111111;
+     //Save today info
+         document.getElementById("cityName").innerText = cityName;
+        document.getElementById("todayTemp").innerText = todayTemp;
+       // document.getElementById("todayWind").innerText = testVar;
+        document.getElementById("todayDescription").innerText = todayDescription;
+ 
+   })
+
+   document.getElementById("todayWind").innerText = testVar;
+
+};
